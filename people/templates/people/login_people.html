@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+
+{% block titulo %}Ingresa al sistema{% endblock %}
+{% block encabezado %}
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="container">
+		<div class="col-sm-7 well">
+      <div class="well">
+				<form class="form-group" id='formulario' method='post' action=''>{% csrf_token %}
+					<table>{{formulario|bootstrap}}</table>
+					<p><input class="btn btn-primary" type='submit' value='Ingresar'/></p>
+				</form>
+      </div>
+    </div>
+		<div class="col-sm-2">
+    </div>
+		<div class="col-sm-3 well">
+      <div class="well">
+					<a href="#">Ánalisis de trámites</a></li>
+      </div>
+    </div>
+	</div>
+</div>
+{% endblock %}

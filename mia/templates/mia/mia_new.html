@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+
+{% block content %}
+  {{ formulario.media }}
+  <div class="container">
+    <div class="page-header">
+      <h2>Manifestación de Impacto Ambeintal</h2>
+    </div>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ formulario|bootstrap }}
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+  </div>
+{% endblock %}

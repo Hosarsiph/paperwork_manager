@@ -1,0 +1,14 @@
+Django==1.8
+django-bootstrap-form==3.2.1
+django-datetime-widget==0.9.3
+psycopg2==2.6.2
+pytz==2016.7
+
+
+
+pip install django-bootstrap-form
+ - Add "bootstrapform" to your INSTALLED_APPS.
+
+
+pip install django-datetime-widget
+  - Add "datetimewidget" to your INSTALLED_APPS.

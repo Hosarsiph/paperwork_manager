@@ -59,6 +59,9 @@ def profile_detail(request):
     usuario = request.user
     first_name =  user.objects.values_list('first_name', flat=True).filter(Q(boss=usuario))
     last_name = user.objects.values_list('last_name', flat=True).filter(Q(boss=usuario))
+    now = datetime.date.today() # fecha actual
+    update_date = Mia.objects.all().update(dia_actual=now)
+
     if usuario.position == 'DA':
         for f, l in zip(first_name, last_name):
             evaluadores = f + l

@@ -3,6 +3,8 @@
 import json
 import ast
 import re
+import datetime
+from datetime import date
 
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
@@ -12,21 +14,16 @@ from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core import serializers
+from django import forms
+from django.views.generic.edit import UpdateView
 
 from .forms import MiaForm
 from .models import Mia
 
 from itertools import groupby
 
-# def mia_list(request):
-#
-#     mias = Mia.objects.all()
-#     usuario = request.user
-#
-#     return render(request, 'mia/mia_list.html', {'mias': mias, 'usuario': usuario})
 
 def mia_new(request):
 
@@ -37,14 +34,42 @@ def mia_new(request):
             ultimo = Mia.objects.latest('id').id
             sumary = ultimo + 1
             mia.id = sumary
-            print sumary
+
             mia.user = request.user
             mia.save()
             return redirect('mia.views.mia_detail', pk=mia.pk)
     else:
         formulario = MiaForm()
+        formulario.fields['fecha_emisi_resolu'].widget = forms.HiddenInput()
+        formulario.fields['dias_transcurre_apercibimiento'].widget = forms.HiddenInput()
+        formulario.fields['dias_transcurre_of_infoadicional'].widget = forms.HiddenInput()
+        formulario.fields['fecha_entrega_of_infoadicional'].widget = forms.HiddenInput()
+        formulario.fields['dias_transcurre_of_infoadicional'].widget = forms.HiddenInput()
+        formulario.fields['fecha_vernci_of_infoadicional'].widget = forms.HiddenInput()
+        formulario.fields['numero_of_infoadicional'].widget = forms.HiddenInput()
+        formulario.fields['numero_of_aplia_plazo'].widget = forms.HiddenInput()
+        formulario.fields['dias_feriado'].widget = forms.HiddenInput()
+        formulario.fields['dias_habiles'].widget = forms.HiddenInput()
+        formulario.fields['resolucion_tiempo'].widget = forms.HiddenInput()
+        formulario.fields['dias_emision_resolucion'].widget = forms.HiddenInput()
+        formulario.fields['fecha_notifi_of_infoadicional'].widget = forms.HiddenInput()
+        formulario.fields['fecha_of_infoadicional'].widget = forms.HiddenInput()
+        formulario.fields['fecha_entrega_apercibimiento'].widget = forms.HiddenInput()
+        formulario.fields['fecha_termi_apercibimiento'].widget = forms.HiddenInput()
+        formulario.fields['fecha_notica_apercibimiento'].widget = forms.HiddenInput()
+        formulario.fields['fecha_of_apercibimiento'].widget = forms.HiddenInput()
+        formulario.fields['nume_of_apercibimiento'].widget = forms.HiddenInput()
+        formulario.fields['fecha_publica_extracto'].widget = forms.HiddenInput()
+        formulario.fields['vigencia_resolucion'].widget = forms.HiddenInput()
+        formulario.fields['tramite_tiempo'].widget = forms.HiddenInput()
+        formulario.fields['fecha_notifica_resolu'].widget = forms.HiddenInput()
+        formulario.fields['sentido_resolucion'].widget = forms.HiddenInput()
+        formulario.fields['dias_evaluacion'].widget = forms.HiddenInput()
+        formulario.fields['numero_resolucion'].widget = forms.HiddenInput()
+        formulario.fields['situacion_actual'].widget = forms.HiddenInput()
+        formulario.fields['estatus'].widget = forms.HiddenInput()
+
     return render_to_response('mia/mia_new.html',{'formulario':formulario}, context_instance=RequestContext(request))
-    # return render(request, 'mia/mia_edit.html', {'formulario': formulario})
 
 def mia_detail(request, pk):
 
@@ -61,9 +86,33 @@ def mia_edit(request, pk):
                 mia = form.save(commit=False)
                 mia.author = request.user
                 mia.save()
-                return redirect('ugi.mia.views.mia_detail', pk=mia.pk)
+                return redirect('mia.views.mia_detail', pk=mia.pk)
         else:
             form = MiaForm(instance=mia)
+            update = Mia.objects.filter(pk=mia.pk)
+            situacion_actual = None
+            estatus = None
+            # SITUACIÓN ACTUAL
+            if  update.values('fecha_ingreso')[0].values()[0] != None and update.values('fecha_emisi_resolu')[0].values()[0] != None:
+                situacion_actual = 'RESOLUTIVO FIRMADO'
+            elif update.values('fecha_ingreso')[0].values()[0] != None and update.values('fecha_of_infoadicional')[0].values()[0] != None and update.values('fecha_entrega_of_infoadicional')[0].values()[0] == None:
+                situacion_actual = 'EN ESPERA DE INFORMACIÓN'
+            elif update.values('fecha_ingreso')[0].values()[0] != None and update.values('fecha_of_infoadicional')[0].values()[0] != None and update.values('fecha_entrega_of_infoadicional')[0].values()[0] != None:
+                situacion_actual = 'EN EVALUACIÓN'
+            elif update.values('fecha_ingreso')[0].values()[0] != None and update.values('fecha_of_apercibimiento')[0].values()[0] != None and update.values('fecha_entrega_apercibimiento')[0].values()[0] == None:
+                situacion_actual = 'EN ESPERA DE INFORMACIÓN'
+            elif update.values('fecha_ingreso')[0].values()[0] != None and update.values('fecha_of_apercibimiento')[0].values()[0] != None and update.values('fecha_entrega_apercibimiento')[0].values()[0] != None:
+                situacion_actual = 'EN EVALUACIÓN'
+            elif update.values('fecha_ingreso')[0].values()[0] != None:
+                situacion_actual = 'EN EVALUACIÓN'
+            # ESTATUS
+            if situacion_actual == 'RESOLUTIVO FIRMADO':
+                estatus = 'RESUELTO'
+            else:
+                estatus = 'EN TRÁMITE'
+            print estatus, situacion_actual
+            Mia.objects.filter(pk=mia.pk).update(estatus=estatus)
+            Mia.objects.filter(pk=mia.pk).update(situacion_actual=situacion_actual)
         return render(request, 'mia/mia_edit.html', {'form': form})
 
 # def analysis_mia(self):

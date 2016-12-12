@@ -3,7 +3,8 @@
 import json
 import ast
 import datetime
-from datetime import date
+from datetime import date, timedelta
+import calendar
 import math
 
 from django.shortcuts import render
@@ -67,9 +68,33 @@ def profile_detail(request):
             evaluadores = f + l
             mia = Mia.objects.filter(evaluador=evaluadores)
             detail_evalu[evaluadores] = mia
+            # print Mia.objects.values_list('fecha_emisi_resolu', flat=True).filter(evaluador=evaluadores)
+            for e in mia:
+                if e.fecha_emisi_resolu == None:
+                    dias = e.dia_actual - e.fecha_ingreso
+                    Mia.objects.filter(bitacora=e.bitacora).update(dias_evaluacion=dias.days)
+                else:
+                    dias =  e.fecha_emisi_resolu - e.fecha_ingreso
+                    Mia.objects.filter(bitacora=e.bitacora).update(dias_evaluacion=dias.days)
     else:
         evaluador =  usuario.first_name + usuario.last_name
-        detail_evalu[evaluador] = Mia.objects.filter(evaluador=evaluador)
+        mia2 = Mia.objects.filter(evaluador=evaluador)
+        detail_evalu[evaluador] = mia2
+
+        fecha_ingreso = Mia.objects.values_list('fecha_ingreso', flat=True).filter(evaluador=evaluador)
+        dia_actual = Mia.objects.values_list('dia_actual', flat=True).filter(evaluador=evaluador)
+        resolucion = Mia.objects.values_list('fecha_emisi_resolu', flat=True).filter(evaluador=evaluador)
+
+        for e in mia2:
+            if e.fecha_emisi_resolu == None and e.fecha_of_infoadicional == None:
+                dias = e.dia_actual - e.fecha_ingreso
+                Mia.objects.filter(bitacora=e.bitacora).update(dias_evaluacion=dias.days)
+            elif e.fecha_of_infoadicional != None:
+                dias = e.fecha_of_infoadicional - e.fecha_ingreso
+                Mia.objects.filter(bitacora=e.bitacora).update(dias_evaluacion=dias.days)
+            else:
+                dias =  e.fecha_emisi_resolu - e.fecha_ingreso
+                Mia.objects.filter(bitacora=e.bitacora).update(dias_evaluacion=dias.days)
 
     return render_to_response('people/profile_detail.html', {
                                                             'usuario': usuario,
@@ -80,3 +105,18 @@ def profile_detail(request):
 def logout_people(request):
     logout(request)
     return HttpResponseRedirect('/')
+
+# def date_by_adding_business_days(from_date, add_days):
+#     business_days_to_add = add_days
+#     current_date = from_date
+#     while business_days_to_add > 0:
+#         current_date += datetime.timedelta(days=1)
+#         weekday = current_date.weekday()
+#         if weekday >= 5: # sunday = 6
+#             continue
+#         business_days_to_add -= 1
+#     return current_date
+#
+# #demo:
+# print '10 business days from today:'
+# print date_by_adding_business_days(datetime.date.today(), 10)

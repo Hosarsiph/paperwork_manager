@@ -72,9 +72,10 @@
 														<tr>
 															<th>#</th>
 															<th>Resueltos</th>
-
+															<th>Días evaluación</th>
 															<th>En Proceso</th>
-
+															<th>Días evaluación</th>
+															<th>Situación actual</th>
 														</tr>
 													</thead>
 													<tbody>
@@ -87,8 +88,23 @@
 																	{% endif %}
 																</td>
 																<td>
+																	{% if i.estatus == 'RESUELTO' %}
+																		<span class="label label-success">{{ i.dias_evaluacion }}</span>
+																	{% endif %}
+																</td>
+																<td>
 																	{% if i.estatus == 'EN TRÁMITE' %}
 																		<a href="{% url 'mia.views.mia_detail' pk=i.pk %}"><span class="label label-danger">{{ i.bitacora }}</span></a>
+																	{% endif %}
+																</td>
+																<td>
+																	{% if i.estatus == 'EN TRÁMITE' %}
+																		<span class="label label-danger">{{ i.dias_evaluacion }}</span>
+																	{% endif %}
+																</td>
+																<td>
+																	{% if i.estatus == 'EN TRÁMITE' %}
+																		<span class="label label-danger">{{ i.situacion_actual }}</span>
 																	{% endif %}
 																</td>
 															</tr>

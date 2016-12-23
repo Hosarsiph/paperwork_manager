@@ -93,10 +93,10 @@ WSGI_APPLICATION = 'paperwork_manager.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
+        'NAME': 'paperwork_manager',
+        'USER': 'postgres',
+        'PASSWORD': 'Geoint*2016',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }

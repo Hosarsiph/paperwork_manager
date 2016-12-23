@@ -10,7 +10,9 @@
          <ul class="nav nav-pills nav-stacked">
            <li><a href="/">INICIO</a></li>
            <li ><a href="{% url 'mia.views.mia_edit' pk=mia.pk %}">EDITAR</a></li>
-           <li><a href="{% url 'mia.views.mia_new' %}">NUEVA MIA</a></li>
+           	{% if usuario.position == 'DA'%}
+              <li><a href="{% url 'mia.views.mia_new' %}">NUEVA MIA</a></li>
+            {% endif %}
          </ul><br>
        </div>
        <br>

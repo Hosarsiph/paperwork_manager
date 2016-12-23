@@ -5,23 +5,25 @@
 {% block encabezado %}
 {% endblock %}
 {% block content %}
-<div class="row">
-	<div class="container">
-		<div class="col-sm-7 well">
-      <div class="well">
-				<form class="form-group" id='formulario' method='post' action=''>{% csrf_token %}
-					<table>{{formulario|bootstrap}}</table>
-					<p><input class="btn btn-primary" type='submit' value='Ingresar'/></p>
-				</form>
-      </div>
-    </div>
-		<div class="col-sm-2">
-    </div>
-		<div class="col-sm-3 well">
-      <div class="well">
-					<a href="#">Ánalisis de trámites</a></li>
-      </div>
-    </div>
+<div class="page-content container">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<div class="login-wrapper">
+			        <div class="box">
+			            <div class="content-wrap">
+										<form class="form-group" id='formulario' method='post' action=''>{% csrf_token %}
+											<table>{{formulario|bootstrap}}</table>
+											<p><input class="btn btn-primary" type='submit' value='Ingresar'/></p>
+										</form>
+			            </div>
+			        </div>
+
+			        <div class="already">
+			            <p>Si olvido su usuario y/o contraseña, contacte al administrador</p>
+			            <!-- <a href="signup.html">Sign Up</a> -->
+			        </div>
+			    </div>
+			</div>
+		</div>
 	</div>
-</div>
 {% endblock %}
